@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مستخرج القضايا</title>
+    <style>
+        /* الألوان الأساسية للتطبيق */
+        :root {
+            --main: #1a5276;
+            --accent: #c0392b;
+            --bg: #f0f3f4;
+            --white: #ffffff;
+            --border: #d5d8dc;
+            --text: #1c2833;
+            --muted: #7f8c8d;
+            --green: #1e8449;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            padding: 30px 20px;
+            color: var(--text);
+        }
+
+        .wrapper {
+            max-width: 820px;
+            margin: 0 auto;
+        }
+
+        /* الترويسة */
+        header {
+            background: var(--main);
+            color: var(--white);
+            padding: 18px 28px;
+            border-radius: 8px 8px 0 0;
+            border-bottom: 3px solid var(--accent);
+        }
+
+        header h1 {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        header p {
+            font-size: 13px;
+            margin-top: 4px;
+            opacity: 0.75;
+        }
+
+        /* المحتوى الرئيسي */
+        .card {
+            background: var(--white);
+            padding: 28px;
+            border: 1px solid var(--border);
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            color: var(--text);
+            background: #fdfdfd;
+            transition: border-color 0.2s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--main);
+        }
+
+        #inputText {
+            min-height: 180px;
+            margin-bottom: 16px;
+        }
+
+        /* زر الاستخراج */
+        .btn-extract {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: var(--main);
+            color: var(--white);
+            border: none;
+            border-radius: 5px;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            margin-bottom: 28px;
+            transition: background 0.2s;
+        }
+
+        .btn-extract:hover {
+            background: #154360;
+        }
+
+        .btn-extract:active {
+            background: #0e2f44;
+        }
+
+        /* قسم النتائج */
+        .result-block {
+            margin-bottom: 22px;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .result-header label {
+            margin: 0;
+        }
+
+        .count-badge {
+            background: var(--main);
+            color: var(--white);
+            font-size: 12px;
+            padding: 2px 9px;
+            border-radius: 10px;
+            margin-right: 8px;
+            font-weight: normal;
+        }
+
+        .btn-copy {
+            padding: 6px 14px;
+            font-size: 13px;
+            font-family: inherit;
+            background: var(--green);
+            color: var(--white);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: auto;
+            transition: background 0.2s;
+        }
+
+        .btn-copy:hover {
+            background: #196f3d;
+        }
+
+        .btn-copy.copied {
+            background: #117a8b;
+        }
+
+        .output-area {
+            min-height: 100px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 13px;
+            direction: ltr;
+            text-align: left;
+            background: #f9f9f9;
+            color: #2c3e50;
+        }
+
+        /* فاصل */
+        .divider {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 20px 0;
+        }
+
+        /* رسالة الحالة */
+        #statusMsg {
+            font-size: 13px;
+            color: var(--accent);
+            min-height: 18px;
+            margin-bottom: 14px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <header>
+        <h1>مستخرج أرقام القضايا والتواريخ</h1>
+        <p>أداة لاستخراج أرقام القضايا وتواريخ الإحالة من النصوص القضائية</p>
+    </header>
+
+    <div class="card">
+        <label for="inputText">النص المراد معالجته</label>
+        <textarea id="inputText" placeholder="الصق النص هنا..."></textarea>
+
+        <p id="statusMsg"></p>
+
+        <button class="btn-extract" onclick="extractData()">استخراج البيانات</button>
+
+        <div class="result-block">
+            <div class="result-header">
+                <label>
+                    أرقام القضايا
+                    <span class="count-badge" id="caseCount">0</span>
+                </label>
+                <button class="btn-copy" onclick="copyText('caseNumbers', this)">📋 نسخ</button>
+            </div>
+            <textarea id="caseNumbers" class="output-area" readonly placeholder="سيتم عرض النتائج بعد الاستخراج..."></textarea>
+        </div>
+
+        <hr class="divider">
+
+        <div class="result-block">
+            <div class="result-header">
+                <label>
+                    تواريخ الإحالة
+                    <span class="count-badge" id="dateCount">0</span>
+                </label>
+                <button class="btn-copy" onclick="copyText('dates', this)">📋 نسخ</button>
+            </div>
+            <textarea id="dates" class="output-area" readonly placeholder="سيتم عرض النتائج بعد الاستخراج..."></textarea>
+        </div>
+    </div>
+</div>
+
+<script>
+    // استخراج أرقام القضايا (10 أرقام) والتواريخ بصيغة يوم/شهر/سنة
+    function extractData() {
+        var input = document.getElementById('inputText').value;
+        var status = document.getElementById('statusMsg');
+
+        status.style.display = 'none';
+
+        if (!input.trim()) {
+            showStatus('يرجى لصق النص أولاً');
+            return;
+        }
+
+        var caseNums = input.match(/\b\d{10}\b/g) || [];
+        var dates    = input.match(/\b\d{2}\/\d{2}\/\d{4}\b/g) || [];
+
+        // إزالة المكررات مع الحفاظ على الترتيب
+        caseNums = removeDuplicates(caseNums);
+        dates    = removeDuplicates(dates);
+
+        document.getElementById('caseNumbers').value = caseNums.join('\n');
+        document.getElementById('dates').value = dates.join('\n');
+
+        document.getElementById('caseCount').textContent = caseNums.length;
+        document.getElementById('dateCount').textContent = dates.length;
+
+        if (caseNums.length === 0 && dates.length === 0) {
+            showStatus('لم يُعثر على أرقام قضايا أو تواريخ في النص');
+        }
+    }
+
+    function removeDuplicates(arr) {
+        var seen = {};
+        var result = [];
+        for (var i = 0; i < arr.length; i++) {
+            if (!seen[arr[i]]) {
+                seen[arr[i]] = true;
+                result.push(arr[i]);
+            }
+        }
+        return result;
+    }
+
+    function copyText(textareaId, btn) {
+        var el = document.getElementById(textareaId);
+
+        if (!el.value.trim()) {
+            showStatus('لا يوجد نص للنسخ');
+            return;
+        }
+
+        // استخدام Clipboard API مع fallback للمتصفحات القديمة
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(el.value).then(function() {
+                confirmCopy(btn);
+            }).catch(function() {
+                fallbackCopy(el, btn);
+            });
+        } else {
+            fallbackCopy(el, btn);
+        }
+    }
+
+    function fallbackCopy(el, btn) {
+        el.select();
+        document.execCommand('copy');
+        confirmCopy(btn);
+    }
+
+    function confirmCopy(btn) {
+        var original = btn.textContent;
+        btn.textContent = '✓ تم النسخ';
+        btn.classList.add('copied');
+        setTimeout(function() {
+            btn.textContent = original;
+            btn.classList.remove('copied');
+        }, 2000);
+    }
+
+    function showStatus(msg) {
+        var el = document.getElementById('statusMsg');
+        el.textContent = msg;
+        el.style.display = 'block';
+    }
+
+    // تشغيل الاستخراج فور اللصق
+    document.getElementById('inputText').addEventListener('paste', function() {
+        setTimeout(extractData, 80);
+    });
+</script>
+
+</body>
+</html>
