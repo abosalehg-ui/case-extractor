@@ -239,94 +239,50 @@
 </div>
 
 <script>
-    // استخراج أرقام القضايا (10 أرقام) والتواريخ بصيغة يوم/شهر/سنة
-    function extractData() {
-        var input = document.getElementById('inputText').value;
-        var status = document.getElementById('statusMsg');
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
 
-        status.style.display = 'none';
+  function extractData() {
+    const text = document.getElementById('inputText').value;
+    if (!text.trim()) { showToast('⚠️ يرجى لصق النص أولاً'); return; }
 
-        if (!input.trim()) {
-            showStatus('يرجى لصق النص أولاً');
-            return;
-        }
+    const cases = text.match(/\b\d{10}\b/g) || [];
+    const dates = text.match(/\b\d{2}\/\d{2}\/\d{4}\b/g) || [];
 
-        var caseNums = input.match(/\b\d{10}\b/g) || [];
-        var dates    = input.match(/\b\d{2}\/\d{2}\/\d{4}\b/g) || [];
+    document.getElementById('caseNumbers').value = cases.join('\n');
+    document.getElementById('dates').value = dates.join('\n');
+    document.getElementById('caseCount').textContent = cases.length;
+    document.getElementById('dateCount').textContent = dates.length;
 
-        // إزالة المكررات مع الحفاظ على الترتيب
-        caseNums = removeDuplicates(caseNums);
-        dates    = removeDuplicates(dates);
-
-        document.getElementById('caseNumbers').value = caseNums.join('\n');
-        document.getElementById('dates').value = dates.join('\n');
-
-        document.getElementById('caseCount').textContent = caseNums.length;
-        document.getElementById('dateCount').textContent = dates.length;
-
-        if (caseNums.length === 0 && dates.length === 0) {
-            showStatus('لم يُعثر على أرقام قضايا أو تواريخ في النص');
-        }
+    if (cases.length === 0 && dates.length === 0) {
+      showToast('⚠️ لم يتم العثور على بيانات');
+    } else {
+      showToast(`✅ تم الاستخراج — ${cases.length} قضية، ${dates.length} تاريخ`);
     }
+  }
 
-    function removeDuplicates(arr) {
-        var seen = {};
-        var result = [];
-        for (var i = 0; i < arr.length; i++) {
-            if (!seen[arr[i]]) {
-                seen[arr[i]] = true;
-                result.push(arr[i]);
-            }
-        }
-        return result;
-    }
-
-    function copyText(textareaId, btn) {
-        var el = document.getElementById(textareaId);
-
-        if (!el.value.trim()) {
-            showStatus('لا يوجد نص للنسخ');
-            return;
-        }
-
-        // استخدام Clipboard API مع fallback للمتصفحات القديمة
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(el.value).then(function() {
-                confirmCopy(btn);
-            }).catch(function() {
-                fallbackCopy(el, btn);
-            });
-        } else {
-            fallbackCopy(el, btn);
-        }
-    }
-
-    function fallbackCopy(el, btn) {
-        el.select();
-        document.execCommand('copy');
-        confirmCopy(btn);
-    }
-
-    function confirmCopy(btn) {
-        var original = btn.textContent;
-        btn.textContent = '✓ تم النسخ';
-        btn.classList.add('copied');
-        setTimeout(function() {
-            btn.textContent = original;
-            btn.classList.remove('copied');
-        }, 2000);
-    }
-
-    function showStatus(msg) {
-        var el = document.getElementById('statusMsg');
-        el.textContent = msg;
-        el.style.display = 'block';
-    }
-
-    // تشغيل الاستخراج فور اللصق
-    document.getElementById('inputText').addEventListener('paste', function() {
-        setTimeout(extractData, 80);
+  function copyField(id, btn) {
+    const val = document.getElementById(id).value;
+    if (!val) { showToast('⚠️ لا يوجد نص للنسخ'); return; }
+    navigator.clipboard.writeText(val).then(() => {
+      const orig = btn.textContent;
+      btn.textContent = '✓ تم النسخ';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 2000);
+    }).catch(() => {
+      const ta = document.getElementById(id);
+      ta.select();
+      document.execCommand('copy');
     });
+  }
+
+  document.getElementById('inputText').addEventListener('paste', () => {
+    setTimeout(extractData, 100);
+  });
 </script>
 
 </body>
