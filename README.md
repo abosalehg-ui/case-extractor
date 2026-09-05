@@ -56,11 +56,25 @@ cd case-extractor
 
 ---
 
+## 🧩 نسخة إضافة المتصفح
+
+الأداة متوفرة أيضاً كإضافة لمتصفحي **Chrome** و **Edge** — زر في شريط الأدوات، واستخراج مباشر من نص الصفحة المفتوحة دون نسخ ولصق.
+
+📖 [خطوات التثبيت والاستخدام](extension/README.md)
+
+---
+
 ## 📂 هيكل المشروع
 
 ```
 case-extractor/
-├── index.html   # الأداة كاملة في ملف واحد
+├── index.html     # الأداة كاملة في ملف واحد (نسخة الويب)
+├── extension/     # إضافة Chrome و Edge
+│   ├── manifest.json
+│   ├── popup.html
+│   ├── popup.css
+│   ├── popup.js
+│   └── icons/
 └── README.md
 ```
 

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>مستخرج القضايا</title>
+<link rel="stylesheet" href="popup.css">
+</head>
+<body>
+
+<header>
+  <h1>مستخرج أرقام القضايا والتواريخ</h1>
+  <p>استخراج أرقام القضايا وتواريخ الإحالة من النصوص القضائية</p>
+</header>
+
+<div class="card">
+  <div class="actions">
+    <button class="btn-page" id="btnPage">📄 استخراج من الصفحة الحالية</button>
+  </div>
+
+  <label for="inputText">النص المراد معالجته</label>
+  <textarea id="inputText" placeholder="الصق النص هنا..."></textarea>
+
+  <button class="btn-extract" id="btnExtract">استخراج البيانات</button>
+
+  <div class="result-block">
+    <div class="result-header">
+      <label>
+        أرقام القضايا
+        <span class="count-badge" id="caseCount">0</span>
+      </label>
+      <button class="btn-copy" data-target="caseNumbers">📋 نسخ</button>
+    </div>
+    <textarea id="caseNumbers" class="output-area" readonly placeholder="سيتم عرض النتائج بعد الاستخراج..."></textarea>
+  </div>
+
+  <hr class="divider">
+
+  <div class="result-block">
+    <div class="result-header">
+      <label>
+        تواريخ الإحالة
+        <span class="count-badge" id="dateCount">0</span>
+      </label>
+      <button class="btn-copy" data-target="dates">📋 نسخ</button>
+    </div>
+    <textarea id="dates" class="output-area" readonly placeholder="سيتم عرض النتائج بعد الاستخراج..."></textarea>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="popup.js"></script>
+</body>
+</html>
